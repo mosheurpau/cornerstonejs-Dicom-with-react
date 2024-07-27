@@ -1,6 +1,7 @@
 import { RenderingEngine, Enums } from "@cornerstonejs/core";
-import { createImageIdsAndCacheMetaData } from "./helper.jsx";
-import { initDemo } from "./Component/initDemo.jsx";
+import { createImageIdsAndCacheMetaData } from "./helper";
+import { initDemo } from "./Component/initDemo";
+import scalingMetaDataManager from "./Component/ptScalingMetaDataProvider";
 import { useEffect } from "react";
 
 const { ViewportType } = Enums;
@@ -12,7 +13,7 @@ const CornerstoneViewer = () => {
         // Initialize Cornerstone
         await initDemo();
 
-        // Register the WADO-RS loader
+        // Fetch image IDs
         const imageIds = await createImageIdsAndCacheMetaData({
           StudyInstanceUID:
             "1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463",
@@ -21,11 +22,18 @@ const CornerstoneViewer = () => {
           wadoRsRoot: "https://d3t6nz73ql33tx.cloudfront.net/dicomweb",
         });
 
-        console.log("Image IDs:", imageIds);
+        if (imageIds.length === 0) {
+          console.error("No image IDs found");
+          return;
+        }
 
-        // Only use the first image ID
-        const singleImageId = imageIds[0];
+        // Add scaling metadata if required
+        imageIds.forEach((imageId) => {
+          const scalingMetaData = { scaleFactor: 1.0, offset: 0.0 };
+          scalingMetaDataManager.addInstance(imageId, scalingMetaData);
+        });
 
+        // Set up the viewport container
         const content = document.getElementById("content");
         if (!content) {
           console.error("Content element not found");
@@ -34,31 +42,29 @@ const CornerstoneViewer = () => {
 
         // Create and style the viewport element
         const element = document.createElement("div");
-        element.style.width = "800px"; // Fixed width
-        element.style.height = "600px"; // Fixed height
+        element.style.width = "300px"; // Full width
+        element.style.height = "300px"; // Full height
         element.style.display = "flex";
         element.style.justifyContent = "center";
         element.style.alignItems = "center";
         content.appendChild(element);
 
-        // Set up the rendering engine and viewport
+        // Initialize Rendering Engine
         const renderingEngineId = "myRenderingEngine";
         const viewportId = "CT_AXIAL_STACK";
         const renderingEngine = new RenderingEngine(renderingEngineId);
 
+        // Configure and enable the viewport
         const viewportInput = {
           viewportId,
           element,
           type: ViewportType.STACK,
         };
-
         renderingEngine.enableElement(viewportInput);
 
-        const viewport = renderingEngine.getViewport(viewportId);
-
-        // Display only the single image
-        viewport.setStack([singleImageId], 0); // Set the stack with the single image
-        viewport.displayImage(singleImageId); // Display only this single image
+        const viewport = renderingEngine.getViewport(viewportInput.viewportId);
+        // Set the stack with image IDs
+        viewport.setStack(imageIds, 60);
 
         // Render the viewport
         viewport.render();

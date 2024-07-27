@@ -1,12 +1,17 @@
 import CornerstoneViewer from "./CornerstoneViewer";
-
+import initVolumeLoader from "./Component/initVolumeLoader";
 import "./App.css";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    initVolumeLoader();
+  }, []);
+
   return (
-    <div>
-      <h1>DICOM Viewer</h1>+
-      <div style={{ margin: "0px 50px" }}>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+      <h1 className="text-4xl font-bold mb-8">DICOM Viewer</h1>
+      <div className="flex justify-center items-center">
         <CornerstoneViewer />
       </div>
     </div>
