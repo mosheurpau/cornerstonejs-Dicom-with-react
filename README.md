@@ -26,4 +26,19 @@ This project sets up a DICOM image viewer using Cornerstone.js integrated with D
   - Contains `createImageIdsAndCacheMetaData` function that fetches DICOM metadata from the DICOMweb server and processes it for Cornerstone.js.
 
 - **`initDemo.jsx`**:
+
   - Initializes Cornerstone.js library and registers necessary tools and utilities.
+
+  ## Summary
+
+- **initVolumeLoader.js**: Registers volume loaders for Cornerstone.js, including streaming image and dynamic image volume loaders.
+
+- **ptScalingMetaDataProvider.js**: Manages and provides image scaling metadata for use in Cornerstone.js.
+
+- **initCornerstoneDICOMImageLoader.js**: Configures and initializes the Cornerstone DICOM image loader with WebAssembly support and worker configuration.
+
+- **initProviders.js**: Sets up metadata providers for Cornerstone.js, including scaling and pixel spacing metadata.
+
+- **CornerstoneViewer.js**: Initializes and renders DICOM images using Cornerstone.js, setting up the viewport and handling image stacks.
+
+- **App.js**: Main React component that integrates the DICOM viewer, initializes volume loaders, and sets up the application's layout and styling.
