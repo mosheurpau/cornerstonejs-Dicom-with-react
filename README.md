@@ -1,6 +1,6 @@
 # Cornerstone.js Viewer with DICOMweb Integration
 
-This project sets up a DICOM image viewer using Cornerstone.js integrated with DICOMweb. It fetches DICOM images from a DICOMweb server, processes them, and displays them using Cornerstone.js in a React application. The component provides various functionalities such as zooming, rotating, Invert Effect and resetting Viewport.
+This project sets up a DICOM image viewer using Cornerstone.js integrated with DICOMweb. It fetches DICOM images from a DICOMweb server, processes them, and displays them using Cornerstone.js in a React application. The component provides various functionalities such as zooming, rotating, Invert Effect, resetting Viewport, and navigate through DICOM images.
 
 ## Features
 
@@ -9,6 +9,8 @@ This project sets up a DICOM image viewer using Cornerstone.js integrated with D
 - **Reset Viewport**: Reset the viewport to its initial state.
 - **Invert Effect**: Toggle the invert effect on the viewport.
 - **Loading State**: Shows a loading state while setting up the viewport.
+- **Next Image**: Displays the next image.
+- **Previous Image**: Displays the previous image.
 
 ## Project Structure
 
@@ -50,3 +52,6 @@ This project sets up a DICOM image viewer using Cornerstone.js integrated with D
 - **CornerstoneViewer.js**: Initializes and renders DICOM images using Cornerstone.js, setting up the viewport and handling image stacks.
 
 - **App.js**: Main React component that integrates the DICOM viewer, initializes volume loaders, and sets up the application's layout and styling.
+
+- **handleNextImage**: Displays the next image.
+- **handlePreviousImage**: Displays the previous image.
