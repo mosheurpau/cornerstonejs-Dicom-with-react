@@ -9,8 +9,8 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
-      <h1 className="text-4xl font-bold mb-8">DICOM Viewer</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-4xl font-bold mb-2">DICOM Viewer</h1>
       <div className="flex justify-center items-center">
         <CornerstoneViewer />
       </div>

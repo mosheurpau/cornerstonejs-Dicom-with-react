@@ -10,6 +10,7 @@ const CornerstoneViewer = () => {
   const [viewport, setViewport] = useState(null);
   const [imageIds, setImageIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isInverted, setIsInverted] = useState(false); // State to manage invert status
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const CornerstoneViewer = () => {
 
         const viewport = renderingEngine.getViewport(viewportInput.viewportId);
         // Set the stack with image IDs
-        viewport.setStack(fetchedImageIds, 60);
+        viewport.setStack(fetchedImageIds, 0); // Start with the first image
 
         // Render the viewport
         viewport.render();
@@ -126,7 +127,7 @@ const CornerstoneViewer = () => {
       viewport.setZoom(1.0);
       viewport.setRotation(0);
       viewport.setPan({ x: 0, y: 0 });
-      viewport.setStack(imageIds, 60); // Ensure the image stack is set again
+      viewport.setStack(imageIds, currentImageIndex); // Ensure the image stack is set again
       viewport.render();
     }
   };
@@ -139,6 +140,25 @@ const CornerstoneViewer = () => {
       setIsInverted(invertValue); // Update the state
     }
   };
+
+  const handleNextImage = () => {
+    if (viewport && currentImageIndex < imageIds.length - 1) {
+      const nextIndex = currentImageIndex + 1;
+      viewport.setStack(imageIds, nextIndex);
+      viewport.render();
+      setCurrentImageIndex(nextIndex);
+    }
+  };
+
+  const handlePreviousImage = () => {
+    if (viewport && currentImageIndex > 0) {
+      const prevIndex = currentImageIndex - 1;
+      viewport.setStack(imageIds, prevIndex);
+      viewport.render();
+      setCurrentImageIndex(prevIndex);
+    }
+  };
+
   if (loading) {
     return (
       <div>
@@ -146,6 +166,7 @@ const CornerstoneViewer = () => {
       </div>
     );
   }
+
   return (
     <div className="bg-slate-700 border-4 border-slate-700 shadow-2xl">
       <div id="content" style={{ width: "100%", height: "100%" }}></div>
@@ -197,6 +218,23 @@ const CornerstoneViewer = () => {
             style={{ marginLeft: "10px" }}
           >
             Reset Viewport
+          </button>
+        </div>
+
+        <div className="my-5 text-center">
+          <button
+            className="btn btn-sm"
+            onClick={handlePreviousImage}
+            style={{ marginLeft: "10px" }}
+          >
+            Previous Image
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={handleNextImage}
+            style={{ marginLeft: "10px" }}
+          >
+            Next Image
           </button>
         </div>
       </div>
