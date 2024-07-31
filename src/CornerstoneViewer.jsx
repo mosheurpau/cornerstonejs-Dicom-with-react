@@ -49,8 +49,8 @@ const CornerstoneViewer = () => {
 
         // Create and style the viewport element
         const element = document.createElement("div");
-        element.style.width = "500px"; // Full width
-        element.style.height = "500px"; // Full height
+        element.style.width = "540px"; // Full width
+        element.style.height = "540px"; // Full height
         element.style.display = "flex";
         element.style.justifyContent = "center";
         element.style.alignItems = "center";
@@ -139,63 +139,67 @@ const CornerstoneViewer = () => {
       setIsInverted(invertValue); // Update the state
     }
   };
-
+  if (loading) {
+    return (
+      <div>
+        <progress className="progress w-56 my-32"></progress>
+      </div>
+    );
+  }
   return (
-    <div>
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        <>
-          <div id="content" style={{ width: "100%", height: "100%" }}></div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "10px",
-            }}
+    <div className="bg-slate-700 border-4 border-slate-700 shadow-2xl">
+      <div id="content" style={{ width: "100%", height: "100%" }}></div>
+      <div
+        className="w-full"
+        style={{
+          justifyContent: "center",
+          marginTop: "10px",
+        }}
+      >
+        <div className="mt-5 text-center">
+          <button className="btn btn-sm" onClick={handleZoomIn}>
+            Zoom In
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={handleZoomOut}
+            style={{ marginLeft: "10px" }}
           >
-            <button className="btn btn-sm" onClick={handleZoomIn}>
-              Zoom In
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={handleZoomOut}
-              style={{ marginLeft: "10px" }}
-            >
-              Zoom Out
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={handleRandomZoom}
-              style={{ marginLeft: "10px" }}
-            >
-              Random Zoom
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={handleRotateDelta}
-              style={{ marginLeft: "10px" }}
-            >
-              Rotate Delta 30
-            </button>
+            Zoom Out
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={handleRandomZoom}
+            style={{ marginLeft: "10px" }}
+          >
+            Random Zoom
+          </button>
+        </div>
 
-            <button
-              className="btn btn-sm"
-              onClick={handleInvert}
-              style={{ marginLeft: "10px" }}
-            >
-              Invert
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={handleResetViewport}
-              style={{ marginLeft: "10px" }}
-            >
-              Reset Viewport
-            </button>
-          </div>
-        </>
-      )}
+        <div className="my-5 text-center">
+          <button
+            className="btn btn-sm"
+            onClick={handleRotateDelta}
+            style={{ marginLeft: "10px" }}
+          >
+            Rotate Delta 30
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={handleInvert}
+            style={{ marginLeft: "10px" }}
+          >
+            Invert
+          </button>
+          <button
+            className="btn btn-sm"
+            onClick={handleResetViewport}
+            style={{ marginLeft: "10px" }}
+          >
+            Reset Viewport
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
