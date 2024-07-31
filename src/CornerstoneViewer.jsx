@@ -10,6 +10,7 @@ const CornerstoneViewer = () => {
   const [viewport, setViewport] = useState(null);
   const [imageIds, setImageIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isInverted, setIsInverted] = useState(false); // State to manage invert status
 
   useEffect(() => {
     const setupViewer = async () => {
@@ -130,6 +131,15 @@ const CornerstoneViewer = () => {
     }
   };
 
+  const handleInvert = () => {
+    if (viewport) {
+      const invertValue = !isInverted; // Toggle the invert state
+      viewport.setProperties({ invert: invertValue }); // Update viewport properties
+      viewport.render();
+      setIsInverted(invertValue); // Update the state
+    }
+  };
+
   return (
     <div>
       {loading ? (
@@ -167,6 +177,14 @@ const CornerstoneViewer = () => {
               style={{ marginLeft: "10px" }}
             >
               Rotate Delta 30
+            </button>
+
+            <button
+              className="btn btn-sm"
+              onClick={handleInvert}
+              style={{ marginLeft: "10px" }}
+            >
+              Invert
             </button>
             <button
               className="btn btn-sm"
