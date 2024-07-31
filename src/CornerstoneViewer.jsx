@@ -2,11 +2,13 @@ import { RenderingEngine, Enums } from "@cornerstonejs/core";
 import { createImageIdsAndCacheMetaData } from "./helper";
 import { initDemo } from "./Component/initDemo";
 import scalingMetaDataManager from "./Component/ptScalingMetaDataProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const { ViewportType } = Enums;
 
 const CornerstoneViewer = () => {
+  const [viewport, setViewport] = useState(null);
+
   useEffect(() => {
     const setupViewer = async () => {
       try {
@@ -68,6 +70,9 @@ const CornerstoneViewer = () => {
 
         // Render the viewport
         viewport.render();
+
+        // Save the viewport to state
+        setViewport(viewport);
       } catch (error) {
         console.error("Error setting up Cornerstone:", error);
       }
@@ -76,7 +81,41 @@ const CornerstoneViewer = () => {
     setupViewer();
   }, []);
 
-  return <div id="content" style={{ width: "100%", height: "100%" }}></div>;
+  const handleZoomIn = () => {
+    if (viewport) {
+      const currentZoom = viewport.getZoom();
+      viewport.setZoom(currentZoom * 1.2); // Increase zoom by 20%
+      viewport.render();
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (viewport) {
+      const currentZoom = viewport.getZoom();
+      viewport.setZoom(currentZoom / 1.2); // Decrease zoom by 20%
+      viewport.render();
+    }
+  };
+
+  return (
+    <div>
+      <div id="content" style={{ width: "100%", height: "100%" }}></div>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
+      >
+        <button className="btn btn-sm" onClick={handleZoomIn}>
+          Zoom In
+        </button>
+        <button
+          className="btn btn-sm"
+          onClick={handleZoomOut}
+          style={{ marginLeft: "10px" }}
+        >
+          Zoom Out
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default CornerstoneViewer;
