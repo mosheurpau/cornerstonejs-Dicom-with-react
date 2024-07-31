@@ -8,6 +8,8 @@ const { ViewportType } = Enums;
 
 const CornerstoneViewer = () => {
   const [viewport, setViewport] = useState(null);
+  const [imageIds, setImageIds] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const setupViewer = async () => {
@@ -16,7 +18,7 @@ const CornerstoneViewer = () => {
         await initDemo();
 
         // Fetch image IDs
-        const imageIds = await createImageIdsAndCacheMetaData({
+        const fetchedImageIds = await createImageIdsAndCacheMetaData({
           StudyInstanceUID:
             "1.3.6.1.4.1.14519.5.2.1.7009.2403.334240657131972136850343327463",
           SeriesInstanceUID:
@@ -24,13 +26,14 @@ const CornerstoneViewer = () => {
           wadoRsRoot: "https://d3t6nz73ql33tx.cloudfront.net/dicomweb",
         });
 
-        if (imageIds.length === 0) {
+        if (fetchedImageIds.length === 0) {
           console.error("No image IDs found");
+          setLoading(false);
           return;
         }
 
         // Add scaling metadata if required
-        imageIds.forEach((imageId) => {
+        fetchedImageIds.forEach((imageId) => {
           const scalingMetaData = { scaleFactor: 1.0, offset: 0.0 };
           scalingMetaDataManager.addInstance(imageId, scalingMetaData);
         });
@@ -39,13 +42,14 @@ const CornerstoneViewer = () => {
         const content = document.getElementById("content");
         if (!content) {
           console.error("Content element not found");
+          setLoading(false);
           return;
         }
 
         // Create and style the viewport element
         const element = document.createElement("div");
-        element.style.width = "300px"; // Full width
-        element.style.height = "300px"; // Full height
+        element.style.width = "500px"; // Full width
+        element.style.height = "500px"; // Full height
         element.style.display = "flex";
         element.style.justifyContent = "center";
         element.style.alignItems = "center";
@@ -66,15 +70,18 @@ const CornerstoneViewer = () => {
 
         const viewport = renderingEngine.getViewport(viewportInput.viewportId);
         // Set the stack with image IDs
-        viewport.setStack(imageIds, 60);
+        viewport.setStack(fetchedImageIds, 60);
 
         // Render the viewport
         viewport.render();
 
-        // Save the viewport to state
+        // Save the viewport and imageIds to state
         setViewport(viewport);
+        setImageIds(fetchedImageIds);
+        setLoading(false);
       } catch (error) {
         console.error("Error setting up Cornerstone:", error);
+        setLoading(false);
       }
     };
 
@@ -97,23 +104,80 @@ const CornerstoneViewer = () => {
     }
   };
 
+  const handleRandomZoom = () => {
+    if (viewport) {
+      const randomZoom = Math.random() * 3 + 0.5; // Random zoom between 0.5 and 3.5
+      viewport.setZoom(randomZoom);
+      viewport.render();
+    }
+  };
+
+  const handleRotateDelta = () => {
+    if (viewport) {
+      const currentRotation = viewport.getRotation();
+      viewport.setRotation(currentRotation + 30); // Rotate by 30 degrees
+      viewport.render();
+    }
+  };
+
+  const handleResetViewport = () => {
+    if (viewport && imageIds.length > 0) {
+      viewport.setZoom(1.0);
+      viewport.setRotation(0);
+      viewport.setPan({ x: 0, y: 0 });
+      viewport.setStack(imageIds, 60); // Ensure the image stack is set again
+      viewport.render();
+    }
+  };
+
   return (
     <div>
-      <div id="content" style={{ width: "100%", height: "100%" }}></div>
-      <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
-      >
-        <button className="btn btn-sm" onClick={handleZoomIn}>
-          Zoom In
-        </button>
-        <button
-          className="btn btn-sm"
-          onClick={handleZoomOut}
-          style={{ marginLeft: "10px" }}
-        >
-          Zoom Out
-        </button>
-      </div>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <div id="content" style={{ width: "100%", height: "100%" }}></div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "10px",
+            }}
+          >
+            <button className="btn btn-sm" onClick={handleZoomIn}>
+              Zoom In
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={handleZoomOut}
+              style={{ marginLeft: "10px" }}
+            >
+              Zoom Out
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={handleRandomZoom}
+              style={{ marginLeft: "10px" }}
+            >
+              Random Zoom
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={handleRotateDelta}
+              style={{ marginLeft: "10px" }}
+            >
+              Rotate Delta 30
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={handleResetViewport}
+              style={{ marginLeft: "10px" }}
+            >
+              Reset Viewport
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
